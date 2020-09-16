@@ -5,16 +5,29 @@
  */
 package databasemigrator;
 
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author EliasGZ
  */
-public class Interfaz extends javax.swing.JFrame {
+public class Interfaz extends javax.swing.JFrame{
+    ConexionMySQL con = new ConexionMySQL();
+    Connection cn;
+    ConexionSQLServer con2 = new ConexionSQLServer();
+    Connection cn2;
 
-    /**
-     * Creates new form Interfaz
-     */
     public Interfaz() {
+      
+        try {
+            this.cn = con.conexion();
+            this.cn2 = con2.conexion();
+        } catch (SQLException ex) {
+            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
         initComponents();
     }
 
