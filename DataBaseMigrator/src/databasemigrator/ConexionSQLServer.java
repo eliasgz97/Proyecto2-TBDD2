@@ -2,11 +2,27 @@ package databasemigrator;
 import java.sql.*;
 public class ConexionSQLServer {
     Connection cn;
-    Statement st;   
-    String sqlserverurl = "jdbc:sqlserver://sqlserver-db.cqrsybqgk1yn.us-east-1.rds.amazonaws.com\\sqlserver-db:1433;databasename=Proyecto2_BD2";
-    String username = "admin";
-    String password = "root1234";
+    Statement st; 
+     String IName;
+     String databaseName;
+    
+    String username ;
+    String password ;
+    String puerto;
+
+    public ConexionSQLServer(String IName, String databaseName, String username, String password,String puerto) {
+        this.IName = IName;
+        this.databaseName = databaseName;
+        this.username = username;
+        this.password = password;
+        this.puerto=puerto;
+    }
+   
+    
+
+    
     public Connection conexion() throws SQLException{
+        String sqlserverurl = "jdbc:sqlserver://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com\\sqlserver-db:"+puerto+";databasename="+databaseName+"";
         cn = DriverManager.getConnection(sqlserverurl, username, password);
         if(cn != null){
             DatabaseMetaData dm = (DatabaseMetaData) cn.getMetaData();

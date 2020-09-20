@@ -7,11 +7,21 @@ import java.util.logging.Logger;
 public class ConexionMySQL {
     Connection cn;
     Statement st;
-    String databaseName = "Proyecto2-BD2";
-    String url = "jdbc:mysql://mysql-db.cqrsybqgk1yn.us-east-1.rds.amazonaws.com/" + "BDFuente" + "?autoReconnect=true&useSSL=false";
-    String username = "admin";
-    String password = "root1234";
+    String databaseName;
+    String IName;
+    String puerto;
+    String username ;
+    String password ;
+
+    public ConexionMySQL(String databaseName, String username, String password,String puerto,String IName) {
+        this.databaseName = databaseName;
+        this.username = username;
+        this.password = password;
+        this.IName=IName;
+    }
+    
     public Connection conexion() throws SQLException{
+         String url = "jdbc:mysql://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com/" + "BDFuente" + "?autoReconnect=true&useSSL=false";
         try {
             Class.forName("com.mysql.jdbc.Driver");
             cn = DriverManager.getConnection(url, username, password);

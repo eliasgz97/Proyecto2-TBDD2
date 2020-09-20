@@ -14,19 +14,12 @@ import java.util.logging.Logger;
  * @author EliasGZ
  */
 public class Interfaz extends javax.swing.JFrame{
-    ConexionMySQL con = new ConexionMySQL();
-    Connection cn;
-    ConexionSQLServer con2 = new ConexionSQLServer();
-    Connection cn2;
+    
+   
 
     public Interfaz() {
       
-        try {
-            this.cn = con.conexion();
-            this.cn2 = con2.conexion();
-        } catch (SQLException ex) {
-            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        
        
         initComponents();
     }
@@ -401,11 +394,24 @@ public class Interfaz extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+    ConexionMySQL con = new ConexionMySQL(jtf_origen_basedatos.getText(),jtf_origen_usuario.getText(),jftf_origen_pass.getText(),jtf_origen_puerto.getText(),jtf_origen_instancia.getText());
+    Connection cn;
+        try {
+            cn = con.conexion();
+        } catch (SQLException ex) {
+            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        ConexionSQLServer con2 = new ConexionSQLServer(jtf_destino_instancia.getText(),jtf_destino_basedatos.getText(),jtf_destino_usuario.getText(),jftf_destino_pass.getText(),jtf_destino_puerto.getText());
+        Connection cn2;
+        try {
+            
+            cn2 = con2.conexion();
+        } catch (SQLException ex) {
+            Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
