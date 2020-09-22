@@ -8,19 +8,20 @@ package databasemigrator;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 
 /**
  *
  * @author EliasGZ
  */
-public class Interfaz extends javax.swing.JFrame{
-    
-   
+public class Interfaz extends javax.swing.JFrame {
 
+    Connection cn;
+    DefaultListModel modelo = new DefaultListModel();
+     DefaultListModel modelo1 = new DefaultListModel();
+    ;
     public Interfaz() {
-      
-        
-       
+
         initComponents();
     }
 
@@ -264,6 +265,7 @@ public class Interfaz extends javax.swing.JFrame{
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel17.setText("Replicando");
 
+        jl_sinreplicar.setModel(new DefaultListModel());
         jScrollPane1.setViewportView(jl_sinreplicar);
 
         jScrollPane2.setViewportView(jl_replicando);
@@ -363,6 +365,11 @@ public class Interfaz extends javax.swing.JFrame{
                 jButton2MouseClicked(evt);
             }
         });
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -394,8 +401,8 @@ public class Interfaz extends javax.swing.JFrame{
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-    ConexionMySQL con = new ConexionMySQL(jtf_origen_basedatos.getText(),jtf_origen_usuario.getText(),jftf_origen_pass.getText(),jtf_origen_puerto.getText(),jtf_origen_instancia.getText());
-    Connection cn;
+        ConexionMySQL con = new ConexionMySQL(jtf_origen_basedatos.getText(), jtf_origen_usuario.getText(), jftf_origen_pass.getText(), jtf_origen_puerto.getText(), jtf_origen_instancia.getText());
+
         try {
             cn = con.conexion();
         } catch (SQLException ex) {
@@ -404,10 +411,10 @@ public class Interfaz extends javax.swing.JFrame{
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ConexionSQLServer con2 = new ConexionSQLServer(jtf_destino_instancia.getText(),jtf_destino_basedatos.getText(),jtf_destino_usuario.getText(),jftf_destino_pass.getText(),jtf_destino_puerto.getText());
+        ConexionSQLServer con2 = new ConexionSQLServer(jtf_destino_instancia.getText(), jtf_destino_basedatos.getText(), jtf_destino_usuario.getText(), jftf_destino_pass.getText(), jtf_destino_puerto.getText());
         Connection cn2;
         try {
-            
+
             cn2 = con2.conexion();
         } catch (SQLException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
@@ -415,11 +422,21 @@ public class Interfaz extends javax.swing.JFrame{
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
+        
+        modelo.addElement(jl_sinreplicar.getSelectedValue());
+        jl_replicando.setModel(modelo);
+        modelo1=(DefaultListModel) jl_sinreplicar.getModel();
+        modelo1.remove(jl_sinreplicar.getSelectedIndex());
+
+
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        modelo1.addElement(jl_replicando.getSelectedValue());
+        jl_sinreplicar.setModel(modelo1);
+        modelo=(DefaultListModel) jl_replicando.getModel();
+        modelo.remove(jl_replicando.getSelectedIndex());
+
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -437,6 +454,14 @@ public class Interfaz extends javax.swing.JFrame{
         jd_replica.setLocationRelativeTo(this);
         jd_replica.setVisible(true);
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        DefaultListModel modelo1 = (DefaultListModel) jl_sinreplicar.getModel();
+        Statement st;
+        modelo1.addElement("Soldado");
+        modelo1.addElement("Historial Ejercito");
+
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
