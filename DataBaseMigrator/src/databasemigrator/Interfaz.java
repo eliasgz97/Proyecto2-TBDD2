@@ -6,9 +6,11 @@
 package databasemigrator;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -17,11 +19,17 @@ import javax.swing.DefaultListModel;
 public class Interfaz extends javax.swing.JFrame {
 
     Connection cn;
+    Connection cn2;
     DefaultListModel modelo = new DefaultListModel();
-     DefaultListModel modelo1 = new DefaultListModel();
+    DefaultListModel modelo1 = new DefaultListModel();
+    ArrayList<ConexionMySQL> conexion = new ArrayList();
+    ArrayList<ConexionSQLServer> conexion2 = new ArrayList();
     ;
     public Interfaz() {
+        try {
 
+        } catch (Exception e) {
+        }
         initComponents();
     }
 
@@ -92,7 +100,7 @@ public class Interfaz extends javax.swing.JFrame {
 
         jLabel8.setText("Password");
 
-        jButton3.setText("Probar");
+        jButton3.setText("Conectar");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -101,7 +109,7 @@ public class Interfaz extends javax.swing.JFrame {
 
         jLabel9.setText("Nombre Base Datos");
 
-        jButton4.setText("Probar");
+        jButton4.setText("Conectar");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -285,6 +293,11 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jButton7.setText("Guardar");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setText("Cancelar");
 
@@ -402,30 +415,35 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         ConexionMySQL con = new ConexionMySQL(jtf_origen_basedatos.getText(), jtf_origen_usuario.getText(), jftf_origen_pass.getText(), jtf_origen_puerto.getText(), jtf_origen_instancia.getText());
-
+        
         try {
             cn = con.conexion();
+            JOptionPane.showMessageDialog(this, "Conexión Exitosa");
+            conexion.add(con);
+            System.out.println(conexion.get(0).getUrl());
         } catch (SQLException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         ConexionSQLServer con2 = new ConexionSQLServer(jtf_destino_instancia.getText(), jtf_destino_basedatos.getText(), jtf_destino_usuario.getText(), jftf_destino_pass.getText(), jtf_destino_puerto.getText());
-        Connection cn2;
         try {
-
             cn2 = con2.conexion();
+            JOptionPane.showMessageDialog(this, "Conexión Exitosa");
+            conexion2.add(con2);
+            System.out.println(conexion2.get(0).getSqlserverurl());
         } catch (SQLException ex) {
             Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        
+
         modelo.addElement(jl_sinreplicar.getSelectedValue());
         jl_replicando.setModel(modelo);
-        modelo1=(DefaultListModel) jl_sinreplicar.getModel();
+        modelo1 = (DefaultListModel) jl_sinreplicar.getModel();
         modelo1.remove(jl_sinreplicar.getSelectedIndex());
 
 
@@ -434,7 +452,7 @@ public class Interfaz extends javax.swing.JFrame {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         modelo1.addElement(jl_replicando.getSelectedValue());
         jl_sinreplicar.setModel(modelo1);
-        modelo=(DefaultListModel) jl_replicando.getModel();
+        modelo = (DefaultListModel) jl_replicando.getModel();
         modelo.remove(jl_replicando.getSelectedIndex());
 
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -457,11 +475,122 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         DefaultListModel modelo1 = (DefaultListModel) jl_sinreplicar.getModel();
-        Statement st;
+        modelo1.removeAllElements();
         modelo1.addElement("Soldado");
-        modelo1.addElement("Historial Ejercito");
+        modelo1.addElement("Historial_Ejercito");
 
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+
+        PreparedStatement loadStatement;
+        DefaultListModel modelo1 = (DefaultListModel) jl_replicando.getModel();
+        if (jl_replicando.getModel().getSize() == 2) {
+            if (modelo1.getElementAt(0).equals("Soldado")) {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Soldado");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Soldado (idSoldado, Nombre_operador, Escuadron) VALUES (?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if (modelo1.getElementAt(0).equals("Historial_Ejercito")) {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Historial_Ejercito");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Historial_Ejercito (idSoldadoActual, Estado, id_Previo, Fecha) VALUES (?, ?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.setString(4, loadedData.getString(4));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+            }  
+            if (modelo1.getElementAt(1).equals("Soldado")) {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Soldado");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Soldado (idSoldado, Nombre_operador, Escuadron) VALUES (?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+            } 
+            if (modelo1.getElementAt(1).equals("Historial_Ejercito")) {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Historial_Ejercito");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Historial_Ejercito (idSoldadoActual, Estado, id_Previo, Fecha) VALUES (?, ?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.setString(4, loadedData.getString(4));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else if (jl_replicando.getModel().getSize() == 1) {
+            if (modelo1.getElementAt(0).equals("Historial_Ejercito")) {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Historial_Ejercito");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Historial_Ejercito (idSoldadoActual, Estado, id_Previo, Fecha) VALUES (?, ?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.setString(4, loadedData.getString(4));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else {
+                try {
+                    loadStatement = cn.prepareStatement("SELECT * FROM Soldado");
+                    PreparedStatement storeStatement = cn2.prepareStatement("INSERT INTO Soldado (idSoldado, Nombre_operador, Escuadron) VALUES (?, ?, ?)");
+                    ResultSet loadedData = loadStatement.executeQuery();
+                    while (loadedData.next()) {
+                        storeStatement.setString(1, loadedData.getString(1));
+                        storeStatement.setString(2, loadedData.getString(2));
+                        storeStatement.setString(3, loadedData.getString(3));
+                        storeStatement.executeUpdate();
+                    }
+                    JOptionPane.showMessageDialog(this, "Datos replicados con éxito");
+                } catch (SQLException ex) {
+                    Logger.getLogger(Interfaz.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe agregar una tabla a la segunda lista para poder replicar");
+        }
+    }//GEN-LAST:event_jButton7ActionPerformed
 
     /**
      * @param args the command line arguments

@@ -9,6 +9,7 @@ public class ConexionSQLServer {
     String username ;
     String password ;
     String puerto;
+    String sqlserverurl;
 
     public ConexionSQLServer(String IName, String databaseName, String username, String password,String puerto) {
         this.IName = IName;
@@ -22,7 +23,7 @@ public class ConexionSQLServer {
 
     
     public Connection conexion() throws SQLException{
-        String sqlserverurl = "jdbc:sqlserver://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com\\sqlserver-db:"+puerto+";databasename="+databaseName+"";
+        sqlserverurl = "jdbc:sqlserver://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com\\sqlserver-db:"+puerto+";databasename="+databaseName+"";
         cn = DriverManager.getConnection(sqlserverurl, username, password);
         if(cn != null){
             DatabaseMetaData dm = (DatabaseMetaData) cn.getMetaData();
@@ -32,4 +33,13 @@ public class ConexionSQLServer {
         }
         return cn;
     }
+
+    public String getSqlserverurl() {
+        return sqlserverurl;
+    }
+
+    public void setSqlserverurl(String sqlserverurl) {
+        this.sqlserverurl = sqlserverurl;
+    }
+    
 }

@@ -12,6 +12,7 @@ public class ConexionMySQL {
     String puerto;
     String username ;
     String password ;
+    String url;
 
     public ConexionMySQL(String databaseName, String username, String password,String puerto,String IName) {
         this.databaseName = databaseName;
@@ -21,7 +22,7 @@ public class ConexionMySQL {
     }
     
     public Connection conexion() throws SQLException{
-         String url = "jdbc:mysql://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com/" + "BDFuente" + "?autoReconnect=true&useSSL=false";
+         url = "jdbc:mysql://"+IName+".cqrsybqgk1yn.us-east-1.rds.amazonaws.com/" + "BDFuente" + "?autoReconnect=true&useSSL=false";
         try {
             Class.forName("com.mysql.jdbc.Driver");
             cn = DriverManager.getConnection(url, username, password);
@@ -30,5 +31,13 @@ public class ConexionMySQL {
             System.out.println(ex.getMessage());
         }return cn;
     }
-        
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
 }
